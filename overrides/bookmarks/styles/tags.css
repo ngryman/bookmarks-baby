@@ -4,10 +4,6 @@
   line-height: 32px;
 }
 
-.tags:hover {
-  outline: 1px solid #ddd;
-}
-
 .tags__tag {
   margin-right: 1em;
   color: #aaa;

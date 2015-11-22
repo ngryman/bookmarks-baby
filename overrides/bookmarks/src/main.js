@@ -52,9 +52,13 @@ $bookmarks.addEventListener('click', function(e) {
   })
   if (!$tags) return
 
-  const $bookmark = e.path.find(function(el) {
-    return el.classList.contains('bookmark')
-  })
+  editTags($tags)
+})
+
+/* -------------------------------------------------------------------------- */
+
+function editTags($tags) {
+  const $bookmark = $tags.parentNode.parentNode
 
   Bookmark.get($bookmark.dataset.id).then(function(bookmark) {
     $tags.innerText = bookmark.tags.join(', ').trim()
@@ -77,16 +81,21 @@ $bookmarks.addEventListener('click', function(e) {
     })
 
     // return key also leaves the field
-    $tags.addEventListener('keypress', function(e) {
+    // tab key focuses next bookmark tags
+    $tags.addEventListener('keydown', function(e) {
       if (13 === e.which) {
-        this.blur()
         e.preventDefault()
+        this.blur()
+      }
+      else if (9 === e.which) {
+        e.preventDefault()
+        const direction = e.shiftKey ? 'previous' : 'next'
+        const $next = $bookmark[direction + 'ElementSibling'].querySelector('.bookmark__tags')
+        editTags($next)
       }
     })
   })
-})
-
-/* -------------------------------------------------------------------------- */
+}
 
 function renderTags($tags, tags) {
   $tags.innerHTML = ''

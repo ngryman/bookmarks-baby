@@ -16,6 +16,7 @@ a:visited {
   text-decoration: none;
   color: inherit;
 }
-input {
+input,
+:focus {
   outline: 0;
 }
