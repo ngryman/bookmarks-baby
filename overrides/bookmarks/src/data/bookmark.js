@@ -24,6 +24,7 @@ Bookmark.load = function(bookmark) {
   return Tags.load(bookmark).then(function(tags) {
     bookmark.tags = tags
     bookmark.site = extractSite(bookmark)
+    bookmark.title = cleanupTitle(bookmark)
     bookmark.__proto__ = Bookmark.prototype
     return bookmark
   })
@@ -47,6 +48,12 @@ Bookmark.get = function(id) {
 }
 
 /* -------------------------------------------------------------------------- */
+/**
+ * @todo: Site names may contains spaces that are not present in `bookmark.site`.
+ * When extracting a site, we should compare the domain name with the title content without spaces.
+ * If the domain name is found in the title, we should prefer extracting it from the title which
+ * is better formatted, than from the domain name which lacks spaces and punctions.
+ */
 
 function extractSite(bookmark) {
   var words = bookmark.url
@@ -59,4 +66,17 @@ function extractSite(bookmark) {
     words[i] = word[0].toUpperCase() + word.slice(1)
   }
   return words.join(' ')
+}
+
+function cleanupTitle(bookmark) {
+  var title = bookmark.title
+  .replace(new RegExp(bookmark.site, 'i'), '')
+  .trim()
+  .replace(/^[|-] /, '')
+  .replace(/ [|-]$/, '')
+
+  title = title || 'Untitled'
+
+  title = title[0].toUpperCase() + title.slice(1)
+  return title
 }
