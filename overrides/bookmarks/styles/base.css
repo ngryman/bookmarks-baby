@@ -1,4 +1,8 @@
+* {
+  box-sizing: border-box;
+}
 body {
+  margin: 0;
   background: #f2f2f2;
   font-size: 81.25%;
 }
@@ -18,5 +22,6 @@ a:visited {
 }
 input,
 :focus {
+  border: 0;
   outline: 0;
 }

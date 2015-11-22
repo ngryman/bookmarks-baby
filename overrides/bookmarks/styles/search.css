@@ -1,0 +1,20 @@
+.search {
+  display: block;
+  margin: 0 auto;
+  padding-left: 60px;
+  width: 100%;
+  max-width: 1170px;
+  height: 36px;
+  line-height: 36px;
+  font-size: 1.2em;
+  color: #fff;
+  background: rgba(255, 255, 255, .15) url(../../../icons/search.svg) no-repeat;
+  background-size: 16px 16px;
+  background-position: 30px center;
+  -webkit-appearance: initial;
+}
+
+.search::-webkit-input-placeholder {
+  color: #fff;
+  opacity: .5;
+}

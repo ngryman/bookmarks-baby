@@ -10,11 +10,11 @@
 .bookmark__link {
   display: flex;
   align-items: center;
-  padding: 1em;
+  padding: 8px;
 }
 
 .bookmark__favicon {
-  padding: 10px;
+  margin: 10px 20px;
   width: 16px;
   height: 16px;
 }
@@ -25,6 +25,7 @@
 
 .bookmark__title {
   flex: 1;
+  font-weight: bold;
 }
 
 .bookmark__tags {
