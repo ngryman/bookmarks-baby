@@ -30,3 +30,8 @@
 .bookmark__tags {
   flex: 1;
 }
+
+.bookmark__tags-edit {
+  flex: 1;
+  line-height: 30px;
+}

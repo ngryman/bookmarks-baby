@@ -1,11 +1,13 @@
 function Bookmark() {}
 
 Bookmark.prototype.update = function() {
-  return new Promise(function(resolve, reject) {
-    chrome.bookmarks.update(this.id, this, function() {
-      resolve(this)
+  return new Promise(function(resolve) {
+    chrome.bookmarks.update(this.id, { title: this.title, url: this.url }, function() {
+      Tags.update(this).then(function() {
+        resolve(this)
+      }.bind(this))
     }.bind(this))
-  })
+  }.bind(this))
 }
 
 Bookmark.prototype.remove = function() {
@@ -13,13 +15,13 @@ Bookmark.prototype.remove = function() {
     chrome.bookmarks.remove(this.id, function() {
       resolve(this)
     }.bind(this))
-  })
+  }.bind(this))
 }
 
 /* -------------------------------------------------------------------------- */
 
 Bookmark.load = function(bookmark) {
-  return Tags.for(bookmark).then(function(tags) {
+  return Tags.load(bookmark).then(function(tags) {
     bookmark.tags = tags
     bookmark.site = extractSite(bookmark)
     bookmark.__proto__ = Bookmark.prototype
@@ -32,6 +34,14 @@ Bookmark.recent = function(count) {
     chrome.bookmarks.getRecent(count, function(bookmarks) {
       const promises = bookmarks.map(Bookmark.load)
       Promise.all(promises).then(resolve)
+    })
+  })
+}
+
+Bookmark.get = function(id) {
+  return new Promise(function(resolve) {
+    chrome.bookmarks.get(id, function(bookmarks) {
+      resolve(Bookmark.load(bookmarks[0]))
     })
   })
 }

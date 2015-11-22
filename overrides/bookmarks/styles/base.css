@@ -16,3 +16,6 @@ a:visited {
   text-decoration: none;
   color: inherit;
 }
+input {
+  outline: 0;
+}
