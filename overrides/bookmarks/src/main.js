@@ -57,22 +57,32 @@ $bookmarks.addEventListener('click', function(e) {
   })
 
   Bookmark.get($bookmark.dataset.id).then(function(bookmark) {
-    const $container = $tags.parentNode
+    $tags.innerText = bookmark.tags.join(', ').trim()
+    $tags.setAttribute('contenteditable', true)
+    $tags.focus()
 
-    const $tagsField = document.createElement('input')
-    $tagsField.classList.add('bookmark__tags-edit')
-    $tagsField.value = bookmark.tags.join(', ')
+    // makes sure cursor is at the end
+    if ($tags.innerText.length > 0) {
+      var selection = window.getSelection()
+      selection.collapse($tags.firstChild, $tags.innerText.length)
+    }
 
-    $tagsField.addEventListener('blur', function() {
-      bookmark.tags = $tagsField.value.split(/, ?/)
+    // saves bookmark when leaving the edit zone
+    $tags.addEventListener('blur', function() {
+      bookmark.tags = $tags.innerText.split(/, ?/)
       bookmark.update().then(function() {
+        $tags.removeAttribute('contenteditable')
         renderTags($tags, bookmark.tags)
-        $container.replaceChild($tags, $tagsField)
       })
     })
 
-    $container.replaceChild($tagsField, $tags)
-    $tagsField.focus()
+    // return key also leaves the field
+    $tags.addEventListener('keypress', function(e) {
+      if (13 === e.which) {
+        this.blur()
+        e.preventDefault()
+      }
+    })
   })
 })
 

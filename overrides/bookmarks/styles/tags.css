@@ -1,5 +1,11 @@
 .tags {
   display: flex;
+  height: 32px;
+  line-height: 32px;
+}
+
+.tags:hover {
+  outline: 1px solid #ddd;
 }
 
 .tags__tag {
