@@ -6,26 +6,7 @@ const $bookmarks = document.querySelector('.bookmarks')
  * Bug:
  *  - https://code.google.com/p/chromium/issues/detail?id=435141
  */
-Bookmark.recent(100).then(function(bookmarks) {
-  const $bookmarkTpl = document.querySelector('#template-bookmark')
-
-  bookmarks.forEach(function(bookmark) {
-    const $bookmarkFrag = document.importNode($bookmarkTpl.content, true)
-    $bookmarkFrag.querySelector('.bookmark').__bookmark = bookmark
-    $bookmarkFrag.querySelector('.bookmark__link').href = bookmark.url
-    $bookmarkFrag.querySelector('.bookmark__favicon').src = 'chrome://favicon/' + bookmark.url
-    $bookmarkFrag.querySelector('.bookmark__site').innerText = bookmark.site
-    $bookmarkFrag.querySelector('.bookmark__title').innerText = bookmark.title
-
-    const $tagTpl = document.querySelector('#template-tag')
-    const $tags = $bookmarkFrag.querySelector('.bookmark__tags')
-    $tags.__$bookmark = $bookmarkFrag.querySelector('.bookmark')
-
-    renderTags($tags, bookmark.tags)
-
-    $bookmarks.appendChild($bookmarkFrag)
-  })
-})
+Bookmarks.recent(100).then(renderBookmarks)
 
 /**
  * Avoids to follow bookmark links when editing or interacting with the entry.
@@ -44,6 +25,29 @@ $bookmarks.addEventListener('click', function(e) {
 $bookmarks.addEventListener('click', onTagsClick)
 
 /* -------------------------------------------------------------------------- */
+
+function renderBookmarks(bookmarks) {
+  $bookmarks.innerHTML = ''
+
+  const $bookmarkTpl = document.querySelector('#template-bookmark')
+
+  bookmarks.forEach(function(bookmark) {
+    const $bookmarkFrag = document.importNode($bookmarkTpl.content, true)
+    $bookmarkFrag.querySelector('.bookmark').__bookmark = bookmark
+    $bookmarkFrag.querySelector('.bookmark__link').href = bookmark.url
+    $bookmarkFrag.querySelector('.bookmark__favicon').src = 'chrome://favicon/' + bookmark.url
+    $bookmarkFrag.querySelector('.bookmark__site').innerText = bookmark.site
+    $bookmarkFrag.querySelector('.bookmark__title').innerText = bookmark.title
+
+    const $tagTpl = document.querySelector('#template-tag')
+    const $tags = $bookmarkFrag.querySelector('.bookmark__tags')
+    $tags.__$bookmark = $bookmarkFrag.querySelector('.bookmark')
+
+    renderTags($tags, bookmark.tags)
+
+    $bookmarks.appendChild($bookmarkFrag)
+  })
+}
 
 function renderBookmark($container, bookmark) {
   const $bookmarkTpl = document.querySelector('#template-bookmark')
