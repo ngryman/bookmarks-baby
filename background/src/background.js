@@ -6,7 +6,7 @@ chrome.omnibox.onInputChanged.addListener(function(terms, suggest) {
     const suggestions = bookmarks.map(function(bookmark) {
       return {
         content: bookmark.safeUrl,
-        description: bookmark.safeTitle
+        description: description(bookmark, terms)
       }
     })
     suggest(suggestions)
@@ -26,3 +26,26 @@ chrome.omnibox.onInputEntered.addListener(function(url) {
 })
 
 // chrome.runtime.onInstalled
+
+function description(bookmark, terms) {
+  var title = bookmark.safeTitle
+  var tags = []
+
+  terms.split(/ +/).forEach(function(term) {
+    const rTerm = new RegExp('(' + term + ')', 'i')
+
+    title = '<url>' + title.replace(rTerm, '<match>$1</match>') + '</url>'
+
+    bookmark.tags.forEach(function(tag) {
+      if (rTerm.exec(tag)) {
+        tags.push(tag)
+      }
+    })
+  })
+
+  if (tags.length > 0) {
+    title += ' - <dim><match>' + tags.join(', ') + '</match></dim>'
+  }
+
+  return title
+}
