@@ -1,0 +1,32 @@
+.bookmark {
+  box-shadow: 0 -1px 0 #e5e5e5,0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);
+  width: 100%;
+  background: #fff;
+  transition:
+    box-shadow 300ms cubic-bezier(.65, -1, .25, 2.5),
+    transform 300ms cubic-bezier(.65, -1, .25, 2.5);
+}
+
+.bookmark__link {
+  display: flex;
+  align-items: center;
+  padding: 1em;
+}
+
+.bookmark__favicon {
+  padding: 10px;
+  width: 16px;
+  height: 16px;
+}
+
+.bookmark__site {
+  width: 180px;
+}
+
+.bookmark__title {
+  flex: 1;
+}
+
+.bookmark__tags {
+  flex: 1;
+}

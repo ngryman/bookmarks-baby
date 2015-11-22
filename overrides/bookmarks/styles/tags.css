@@ -1,0 +1,9 @@
+.tags {
+  display: flex;
+}
+
+.tags__tag {
+  margin-right: 1em;
+  color: #aaa;
+  font-size: 1.2em;
+}

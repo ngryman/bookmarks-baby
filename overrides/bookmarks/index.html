@@ -1,0 +1,29 @@
+<link href="styles/base.css" rel="stylesheet">
+<link href="styles/bookmark.css" rel="stylesheet">
+<link href="styles/bookmarks.css" rel="stylesheet">
+<link href="styles/tags.css" rel="stylesheet">
+
+<header>
+	<input type="search" autofocus>
+</header>
+
+<main>
+	<div class="bookmarks"></div>
+</main>
+
+<template id="template-bookmark">
+	<article class="bookmark">
+		<a class="bookmark__link" href="">
+			<img class="bookmark__favicon" src="">
+			<span class="bookmark__site"></span>
+			<span class="bookmark__title"></span>
+			<ul class="bookmark__tags tags">
+				<li class="tags__tag">devel</li>
+				<li class="tags__tag">tech</li>
+				<li class="tags__tag">me</li>
+			</ul>
+		</a>
+	</article>
+</template>
+
+<script src="src/main.js"></script>
