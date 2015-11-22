@@ -27,6 +27,7 @@
   "permissions": [
     "bookmarks",
     "tabs",
+    "storage",
     "chrome://favicon/*"
   ],
   "omnibox": {
