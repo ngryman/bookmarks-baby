@@ -11,9 +11,7 @@
   },
   "default_locale": "en",
   "background": {
-    "scripts": [
-      "bg/background.js"
-    ],
+    "page": "background/background.html",
     "persistent": false
   },
   "page_action": {
@@ -22,9 +20,10 @@
     "default_popup": "page_action/page_action.html"
   },
   "chrome_url_overrides": {
-    "bookmarks": "overrides/bookmarks/index.html"
+    "bookmarks": "overrides/bookmarks/bookmarks.html"
   },
   "permissions": [
+    "background",
     "bookmarks",
     "tabs",
     "storage",

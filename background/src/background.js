@@ -1,17 +1,14 @@
-chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
-  chrome.bookmarks.search(text, function(results) {
-    if (0 === results.length) return
-
+chrome.omnibox.onInputChanged.addListener(function(terms, suggest) {
+  Bookmarks.search(terms).then(function(bookmarks) {
     // limit to 6 results
-    results.length = Math.min(6, results.length)
+    bookmarks.length = Math.min(6, bookmarks.length)
 
-    var suggestions = results.map(function(result) {
+    const suggestions = bookmarks.map(function(bookmark) {
       return {
-        content: result.url,
-        description: result.title
+        content: bookmark.safeUrl,
+        description: bookmark.safeTitle
       }
     })
-
     suggest(suggestions)
   })
 })
@@ -27,3 +24,5 @@ chrome.omnibox.onInputEntered.addListener(function(url) {
     }
   })
 })
+
+// chrome.runtime.onInstalled
