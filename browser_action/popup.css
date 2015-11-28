@@ -1,0 +1,42 @@
+/**
+ * Materialize customization.
+ */
+
+.btn-flat:focus {
+  background: inherit;
+}
+
+
+body {
+  animation: fadein 1s;
+  width: 40rem;
+  padding: 1rem 0;
+  font-family: Roboto, sans-serif;;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+}
+
+.materialize-tags {
+  padding: 6px 0;
+}
+
+input:focus:not([readonly]),
+.materialize-tags.active {
+  border-bottom: 1px solid #42a5f5 !important;
+  box-shadow: 0 1px 0 0 #42a5f5 !important;
+}
+
+input.n-tag:focus:not([readonly]) {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+@media screen and (max-width: 600px) {
+  .materialize-tags {
+    margin-top: 0;
+  }
+}
