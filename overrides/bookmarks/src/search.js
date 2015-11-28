@@ -1,3 +1,5 @@
+'use strict'
+
 const $search = document.querySelector('.search')
 
 $search.addEventListener('keyup', debounce(function() {

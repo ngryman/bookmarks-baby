@@ -1,3 +1,5 @@
+'use strict'
+
 const $bookmarks = document.querySelector('.bookmarks')
 
 /**
@@ -134,7 +136,7 @@ function stopEditing($tags) {
   const bookmark = $tags.__$bookmark.__bookmark
 
   bookmark.tags = $tags.innerText.trim().split(/, ?/)
-  bookmark.update().then(function() {
+  bookmark.save().then(function() {
     $tags.removeAttribute('contenteditable')
     $tags.removeEventListener('blur', onTagsBlur)
     $tags.removeEventListener('keydown', onTagsKeydown)
