@@ -6,22 +6,16 @@
   background: inherit;
 }
 
-
-body {
-  animation: fadein 1s;
-  width: 40rem;
-  padding: 1rem 0;
-  font-family: Roboto, sans-serif;;
-}
-
-@keyframes fadein {
-  from {
-    opacity: 0;
-  }
-}
+/**
+ * Materialize Tags customization.
+ */
 
 .materialize-tags {
   padding: 6px 0;
+}
+
+.materialize-tags .chip {
+  background: #bbdefb;
 }
 
 input:focus:not([readonly]),
@@ -38,5 +32,22 @@ input.n-tag:focus:not([readonly]) {
 @media screen and (max-width: 600px) {
   .materialize-tags {
     margin-top: 0;
+  }
+}
+
+/**
+ * Popup.
+ */
+
+body {
+  animation: fadein 1s;
+  width: 40rem;
+  padding: 1rem 0;
+  font-family: Roboto, sans-serif;;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
   }
 }
