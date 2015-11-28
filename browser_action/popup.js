@@ -5,15 +5,23 @@ let currentBookmark
 chrome.tabs.query({ active: true }, function(tabs) {
   let tab = tabs[0]
 
-  Bookmarks.create({
-    title: tab.title,
-    url: tab.url
+  Bookmarks.get({ url: tab.url }).catch(function() {
+    return Bookmarks.create({
+      title: tab.title,
+      url: tab.url
+    })
   })
   .then(function(bookmark) {
     $('[name=site]').val(bookmark.site)
     $('[name=title]').val(bookmark.title)
+    if (bookmark.tags.length > 0) {
+      bookmark.tags.forEach(function(tag) {
+        $('[name=tags]').materialtags('add', tag)
+      })
+    }
     currentBookmark = bookmark
   })
+
   $('[name=url]').val(tab.url)
 
   $('form').on('submit', submit)
