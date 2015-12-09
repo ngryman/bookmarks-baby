@@ -1,8 +1,8 @@
-# bower
-components
+# project
+dist/
 
 # node
-node_modules
+node_modules/
 npm-debug.log
 
 # OS

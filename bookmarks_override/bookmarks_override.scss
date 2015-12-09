@@ -1,0 +1,14 @@
+@import 'node_modules/normalize.css/normalize.scss';
+@import '../shared/base.scss';
+@import '../shared/components/bookmarks_list/bookmarks_list.scss';
+@import '../shared/components/header/header.scss';
+
+body {
+  background: #f2f2f2;
+}
+
+.app__inner {
+  margin: 0 auto;
+  padding: 100px 0 50px;
+  max-width: 1170px;
+}

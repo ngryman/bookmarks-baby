@@ -1,3 +1,5 @@
+import Storage from '../shared/storage'
+
 chrome.omnibox.onInputChanged.addListener(function(terms, suggest) {
   Bookmarks.search(terms).then(function(bookmarks) {
     // limit to 6 results

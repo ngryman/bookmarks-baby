@@ -2,6 +2,10 @@
  * Materialize customization.
  */
 
+.row {
+  margin-bottom: 0;
+}
+
 .btn-flat:focus {
   background: inherit;
 }

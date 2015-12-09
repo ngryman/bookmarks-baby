@@ -1,3 +1,14 @@
+/**
+ * Bookmarks list.
+ */
+
+.bookmarks-list {
+}
+
+/**
+ * Bookmark.
+ */
+
 .bookmark {
   box-shadow: 0 -1px 0 #e5e5e5,0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);
   width: 100%;
@@ -25,19 +36,23 @@
 
 .bookmark__title {
   flex: 1;
-  font-weight: bold;
 }
 
 .bookmark__tags {
   flex: 1;
+  height: 32px;
+  line-height: 32px;
+  text-align: right;
 }
 
-.bookmark__tags:hover,
-.bookmark__tags:focus {
-  outline: 1px solid #ddd;
-}
+/**
+ * Tag.
+ */
 
-.bookmark__tags-edit {
-  flex: 1;
-  line-height: 30px;
+.tag {
+  display: inline-block;
+  margin-right: 1em;
+  color: #aaa;
+  font-size: 1.2em;
+  font-weight: bold;
 }
