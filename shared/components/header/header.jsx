@@ -10,7 +10,8 @@ export default class Header extends Component {
   render() {
     return (
       <header className="header">
-        <input className="header__search" type="search" onChange={::this.handleChange} />
+        <a className="header__title" href="#">Bookmarks Baby!</a>
+        <input className="header__search" type="search" onChange={::this.handleChange} placeholder="Recherche rapide" />
       </header>
     )
   }

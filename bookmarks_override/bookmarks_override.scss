@@ -4,11 +4,23 @@
 @import '../shared/components/header/header.scss';
 
 body {
-  background: #f2f2f2;
+  background: #fafafa;
 }
 
 .app__inner {
   margin: 0 auto;
-  padding: 100px 0 50px;
+  padding: 44px 0 50px;
   max-width: 1170px;
+}
+
+main {
+  display: flex;
+}
+
+aside {
+  flex: 3;
+}
+
+.bookmarks-list {
+  flex: 9;
 }

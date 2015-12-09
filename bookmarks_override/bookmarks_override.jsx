@@ -27,6 +27,7 @@ export default class App extends Component {
       <div className="app__inner">
         <Header onSearch={::this.handleSearch} />
         <main>
+          <aside></aside>
           <BookmarksList items={this.state.bookmarks} />
         </main>
       </div>

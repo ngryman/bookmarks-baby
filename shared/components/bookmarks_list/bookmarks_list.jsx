@@ -27,7 +27,7 @@ export default class BookmarksList extends Component {
   render() {
     const listItems = this.props.items.map(::this.renderBookmark)
     return (
-      <ul className="bookmarks">{listItems}</ul>
+      <ul className="bookmarks-list">{listItems}</ul>
     )
   }
 }
