@@ -59,7 +59,7 @@ function tasksFor(target) {
   gulp.task(`watch:${target}`, [`build:${target}`], () => {
     gulp.watch([`${target}/*.jsx`, 'shared/**/*.{jsx,js}'], [`${BUILD}:jsx`])
     gulp.watch([`${target}/*.scss`, 'shared/**/*.scss'], [`${BUILD}:sass`])
-    gulp.watch(`${target}/*.html`, ['build:html'])
+    gulp.watch(`${target}/*.html`, [`${BUILD}:html`])
   })
 }
 
