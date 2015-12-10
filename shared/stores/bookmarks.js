@@ -9,7 +9,7 @@ export default class BookmarksStore {
 
   static recent(count) {
     return new Promise((resolve, reject) => {
-      chrome.bookmarks.getRecent(count, function(bookmarks) {
+      chrome.bookmarks.getRecent(count, bookmarks => {
         if (chrome.runtime.lastError) return reject()
 
         const promises = bookmarks.map(setTags)
@@ -136,9 +136,9 @@ function searchBookmarks(terms) {
     chrome.bookmarks.search(terms, function(bookmarks) {
       if (chrome.runtime.lastError) return reject()
 
-      // removes folders
+      // removes folders or invalid entries
       for (var i = 0; i < bookmarks.length; i++) {
-        if (bookmarks[i].dateGroupModified) {
+        if (bookmarks[i].dateGroupModified || !bookmarks[i].url) {
           bookmarks.splice(i, 1)
           i--
         }
@@ -151,16 +151,21 @@ function searchBookmarks(terms) {
 
 function searchTags(terms) {
   return TagsStore.search(terms)
-  .then(tag => getBookmark(tag.ids))
+  .then(tag => 0 !== tag.ids.length
+    ? getBookmarks(tag.ids)
+    : []
+  )
 }
 
-function getBookmark(ids) {
+function getBookmarks(ids) {
   return new Promise((resolve, reject) => {
     chrome.bookmarks.get(ids, function(bookmarks) {
       if (chrome.runtime.lastError) return reject()
 
       const promises = bookmarks.map(setTags)
-      Promise.all(promises).then(resolve)
+      Promise.all(promises)
+      .then(resolve)
+      .catch(reject)
     })
   })
 }

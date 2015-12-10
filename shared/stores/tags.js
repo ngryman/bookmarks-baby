@@ -14,7 +14,8 @@ export default class TagsStore {
         if (chrome.runtime.lastError) return reject()
 
         const tag = { name: words[0], ids: res[key] || [] }
-        resolve(setTags([tag]))
+        setTags([tag])
+        resolve(tag)
       })
     })
     .catch(onError)
