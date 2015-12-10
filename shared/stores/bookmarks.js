@@ -14,6 +14,7 @@ export default class BookmarksStore {
 
         const promises = bookmarks.map(setTags)
         Promise.all(promises)
+        .then(setSite)
         .then(setBookmarks)
         .then(resolve)
       })
@@ -27,13 +28,22 @@ export default class BookmarksStore {
       searchBookmarks(terms)
     ])
     .then((results) => {
-      console.log(results)
       const bookmarks = results[0].concat(results[1])
 
       const promises = bookmarks.map(setTags)
-      Promise.all(promises).then(setBookmarks)
+      Promise.all(promises)
+      .then(setSite)
+      .then(setBookmarks)
     })
     .catch(onError)
+  }
+
+  static update(bookmark) {
+    return new Promise((resolve, reject) => {
+      chrome.bookmarks.set(bookmark.id, bookmark, function(res) {
+        console.log(res)
+      })
+    })
   }
 
   static attach(component) {
@@ -56,6 +66,51 @@ export default class BookmarksStore {
 function onError(err) {
   console.error(err.stack || chrome.runtime.lastError)
   BookmarksStore.reset()
+}
+
+function setSite(bookmarks) {
+  const delimiters = /\W?[-—|]\W?/
+
+  for (let bookmark of bookmarks) {
+    let site = bookmark.url.replace(/https?:\/\/(?:www\.)?([\w-]*)\..*/, '$1')
+
+    const titleChunks = bookmark.title.split(delimiters)
+    if (1 === titleChunks.length) {
+      site = titleChunks[0]
+    }
+    else {
+      const siteChunks = [titleChunks[0], titleChunks[titleChunks.length - 1]]
+      const chunksToAnalyze = siteChunks
+      .map(chunk => chunk.toLowerCase())
+      .reduce((acc, chunk) => {
+        acc.push(chunk.replace(/ /g, ''))
+        acc.push(chunk.replace(/ /g, '-'))
+        return acc
+      }, [])
+
+      for (let i = 0; i < chunksToAnalyze.length; i++) {
+        if (site.startsWith(chunksToAnalyze[i])) {
+          const idx = i / 2 | 0
+          site = siteChunks[idx]
+          if (0 === idx) {
+            titleChunks.shift()
+          }
+          else {
+            titleChunks.pop()
+          }
+          break
+        }
+      }
+    }
+
+    bookmark.site = site
+    .replace('-', ' ')
+    .replace(/\w\S*/g, word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase())
+
+    bookmark.title = titleChunks.join(' - ')
+  }
+
+  return bookmarks
 }
 
 function setBookmarks(bookmarks) {

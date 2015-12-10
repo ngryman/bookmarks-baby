@@ -19,33 +19,55 @@
   transition:
     box-shadow 300ms cubic-bezier(.65, -1, .25, 2.5),
     transform 300ms cubic-bezier(.65, -1, .25, 2.5);
-}
 
-.bookmark__link {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #f0f0f0;
-  padding: 12px 0;
-}
+  &__link {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 12px 0;
+  }
 
-.bookmark__favicon {
-  margin: 0 10px;
-  width: 16px;
-  height: 16px;
-  -webkit-filter: grayscale(100%);
-}
+  &__favicon {
+    margin-right: 14px;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    -webkit-filter: grayscale(100%);
+  }
 
-.bookmark__site {
-  width: 180px;
-}
+  &:hover &__favicon {
+    -webkit-filter: none;
+  }
 
-.bookmark__title {
-  flex: 1;
-}
+  &__infos {
+    flex: 3;
+  }
 
-.bookmark__tags {
-  flex: 1;
-  text-align: right;
+  &__site {
+    // display: block;
+    &::after {
+      content: ' - ';
+    }
+  }
+
+  &__title {
+    color: #999;
+
+    &[contenteditable] {
+      border: 1px solid #ddd;
+      padding: 6px;
+      white-space: nowrap;
+    }
+  }
+
+  &:hover &__title {
+    color: #db4c3f;
+  }
+
+  &__tags {
+    flex: 1;
+    text-align: right;
+  }
 }
 
 /**
@@ -54,8 +76,7 @@
 
 .tag {
   display: inline-block;
-  margin-right: 1em;
-  color: #aaa;
-  font-size: 1.2em;
-  font-weight: bold;
+  margin-right: 5px;
+  color: #888;
+  font-size: 11px;
 }
