@@ -10,7 +10,7 @@ export default class TagsStore {
       const words = terms.split(/ +/)
       const key = 'tag:' + words[0]
 
-      chrome.storage.sync.get(key, function(res) {
+      chrome.storage.sync.get(key, res => {
         if (chrome.runtime.lastError) return reject()
 
         const tag = { name: words[0], ids: res[key] || [] }
@@ -22,12 +22,12 @@ export default class TagsStore {
   }
 }
 
-function onError(err) {
+const onError = (err) => {
   console.error(err || chrome.runtime.lastError)
   TagsStore.reset()
 }
 
-function setTags(tags) {
+const setTags = (tags) => {
   TagsStore.tags = tags
   return tags
 }

@@ -40,7 +40,7 @@ export default class BookmarksStore {
 
   static update(bookmark) {
     return new Promise((resolve, reject) => {
-      chrome.bookmarks.set(bookmark.id, bookmark, function(res) {
+      chrome.bookmarks.set(bookmark.id, bookmark, res => {
         console.log(res)
       })
     })
@@ -63,12 +63,12 @@ export default class BookmarksStore {
 
 /* -------------------------------------------------------------------------- */
 
-function onError(err) {
+const onError = (err) => {
   console.error(err.stack || chrome.runtime.lastError)
   BookmarksStore.reset()
 }
 
-function setSite(bookmarks) {
+const setSite = (bookmarks) => {
   const delimiters = /\W?[-—|]\W?/
 
   for (let bookmark of bookmarks) {
@@ -113,16 +113,16 @@ function setSite(bookmarks) {
   return bookmarks
 }
 
-function setBookmarks(bookmarks) {
+const setBookmarks = (bookmarks) => {
   BookmarksStore.bookmarks = bookmarks
   return bookmarks
 }
 
-function setTags(bookmark) {
+const setTags = (bookmark) => {
   return new Promise((resolve, reject) => {
     const key = 'site:' + bookmark.id
 
-    chrome.storage.sync.get(key, function(res) {
+    chrome.storage.sync.get(key, res => {
       if (chrome.runtime.lastError) return reject()
 
       bookmark.tags = res[key] || []
@@ -131,9 +131,9 @@ function setTags(bookmark) {
   })
 }
 
-function searchBookmarks(terms) {
+const searchBookmarks = (terms) => {
   return new Promise((resolve, reject) => {
-    chrome.bookmarks.search(terms, function(bookmarks) {
+    chrome.bookmarks.search(terms, bookmarks => {
       if (chrome.runtime.lastError) return reject()
 
       // removes folders or invalid entries
@@ -149,7 +149,7 @@ function searchBookmarks(terms) {
   })
 }
 
-function searchTags(terms) {
+const searchTags = (terms) => {
   return TagsStore.search(terms)
   .then(tag => 0 !== tag.ids.length
     ? getBookmarks(tag.ids)
@@ -157,9 +157,9 @@ function searchTags(terms) {
   )
 }
 
-function getBookmarks(ids) {
+const getBookmarks = (ids) => {
   return new Promise((resolve, reject) => {
-    chrome.bookmarks.get(ids, function(bookmarks) {
+    chrome.bookmarks.get(ids, bookmarks => {
       if (chrome.runtime.lastError) return reject()
 
       const promises = bookmarks.map(setTags)
