@@ -1,34 +1,9 @@
 import React, { Component } from 'react'
+import Store from '../../stores/bookmarks'
 
 export default class BookmarksList extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      editing: false
-    }
-  }
-
-  renderTag(tag) {
-    return (
-      <li className="tag">{tag}</li>
-    )
-  }
-
   renderBookmark(bookmark) {
-    const tagsItems = bookmark.tags.map(::this.renderTag)
-    return (
-      <li className="bookmark" key={bookmark.id}>
-        <a className="bookmark__link" href={bookmark.url}>
-          <img className="bookmark__favicon" src={`chrome://favicon/${bookmark.url}`} />
-          <div className="bookmark__infos">
-            <span className="bookmark__site">{bookmark.site}</span>
-            <span className="bookmark__title">{bookmark.title}</span>
-          </div>
-          <ul className="bookmark__tags">{tagsItems}</ul>
-        </a>
-      </li>
-    )
+    return <BookmarkItem key={bookmark.id} bookmark={bookmark} />
   }
 
   render() {
@@ -36,24 +11,76 @@ export default class BookmarksList extends Component {
     return (
       <div className="bookmarks-list">
         <h2>Recent</h2>
-        <button onClick={::this.handleEditClick}>edit</button>
-        <ul onClick={::this.handleBookmarkClick}>{listItems}</ul>
+        <ul>{listItems}</ul>
       </div>
     )
   }
+}
 
-  handleEditClick() {
-    this.state.editing = !this.state.editing
+class BookmarkItem extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      editing: false
+    }
   }
 
-  handleBookmarkClick(e) {
-    if (!this.state.editing) return
-    e.preventDefault()
-
-    let $el = e.target
-    if ($el.classList.contains('bookmark__title')) {
-      $el.setAttribute('contenteditable', true)
-      $el.focus()
+  componentDidUpdate() {
+    if (this.refs.input) {
+      this.refs.input.focus()
+      // force the cursor to be at the end of the field
+      this.refs.input.value = this.refs.input.value
     }
+  }
+
+  renderTag(tag) {
+    return (
+      <li key={tag} className="tag">{tag}</li>
+    )
+  }
+
+  renderTags(tags) {
+    return (!this.state.editing
+      ? <ul className="bookmark__tags">{tags.map(::this.renderTag)}</ul>
+      : <input className="bookmark__tags"
+        defaultValue={tags.join(', ')}
+        onKeyPress={::this.handleReturn}
+        onBlur={::this.updateTags}
+        ref="input" />
+    )
+  }
+
+  render() {
+    const bookmark = this.props.bookmark
+    return (
+      <li className="bookmark" onClick={::this.handleClick}>
+        <a className="bookmark__link" href={bookmark.url}>
+          <img className="bookmark__favicon" src={`chrome://favicon/${bookmark.url}`} />
+          <div className="bookmark__infos">
+            <span className="bookmark__site">{bookmark.site}</span>
+            <span className="bookmark__title">{bookmark.title}</span>
+          </div>
+          {this.renderTags(bookmark.tags)}
+        </a>
+      </li>
+    )
+  }
+
+  handleClick(e) {
+    e.preventDefault()
+    this.setState({ editing: true })
+  }
+
+  handleReturn(e) {
+    if (13 === e.which) {
+      e.target.blur()
+    }
+  }
+
+  updateTags(e) {
+    const bookmark = this.props.bookmark
+    bookmark.tags = e.target.value.split(/ *, */g)
+    Store.update(bookmark)
+    this.setState({ editing: false })
   }
 }

@@ -40,10 +40,17 @@ export default class BookmarksStore {
 
   static update(bookmark) {
     return new Promise((resolve, reject) => {
-      chrome.bookmarks.set(bookmark.id, bookmark, res => {
-        console.log(res)
+      chrome.bookmarks.update(bookmark.id, {
+        title: bookmark.title,
+        url: bookmark.url
+      }, () => {
+        if (chrome.runtime.lastError) return reject()
+
+        updateTags(bookmark)
+        .then(resolve)
       })
     })
+    .catch(onError)
   }
 
   static attach(component) {
@@ -120,13 +127,24 @@ const setBookmarks = (bookmarks) => {
 
 const setTags = (bookmark) => {
   return new Promise((resolve, reject) => {
-    const key = 'site:' + bookmark.id
+    const key = 'bookmark:' + bookmark.id
 
     chrome.storage.sync.get(key, res => {
       if (chrome.runtime.lastError) return reject()
 
       bookmark.tags = res[key] || []
       resolve(bookmark)
+    })
+  })
+}
+
+const updateTags = (bookmark) => {
+  return new Promise((resolve, reject) => {
+    const key = 'bookmark:' + bookmark.id
+
+    chrome.storage.sync.set({ [key]: bookmark.tags }, () => {
+      if (chrome.runtime.lastError) return reject()
+      resolve()
     })
   })
 }

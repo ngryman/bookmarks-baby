@@ -16,6 +16,7 @@
 .bookmark {
   width: 100%;
   font-size: 14px;
+  line-height: 2.2;
   transition:
     box-shadow 300ms cubic-bezier(.65, -1, .25, 2.5),
     transform 300ms cubic-bezier(.65, -1, .25, 2.5);
@@ -66,7 +67,21 @@
 
   &__tags {
     flex: 1;
+    padding-right: 5px;
+    font-size: 11px;
     text-align: right;
+    color: #888;
+
+    &:focus {
+      color: inherit;
+    }
+
+    @at-root input#{&} {
+      margin-right: 5px;
+      border: 1px solid #ddd;
+      padding: 5px 5px 6px;
+      text-align: left;
+    }
   }
 }
 
@@ -77,6 +92,4 @@
 .tag {
   display: inline-block;
   margin-right: 5px;
-  color: #888;
-  font-size: 11px;
 }
