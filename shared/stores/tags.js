@@ -20,6 +20,51 @@ export default class TagsStore {
     })
     .catch(onError)
   }
+
+  static addBookmark(tag, bookmark) {
+    return new Promise((resolve, reject) => {
+      const key = 'tag:' + tag
+      chrome.storage.sync.get(key, res => {
+        if (chrome.runtime.lastError) return reject()
+
+        res[key] = res[key] || []
+        res[key].push(bookmark.id)
+        chrome.storage.sync.set(res, () => {
+          if (chrome.runtime.lastError) return reject()
+          resolve()
+        })
+      })
+    })
+    .catch(onError)
+  }
+
+  static removeBookmark(tag, bookmark) {
+    return new Promise((resolve, reject) => {
+      const key = 'tag:' + tag
+      chrome.storage.sync.get(key, res => {
+        if (chrome.runtime.lastError) return reject()
+        if (null == res[key]) return reject('Tag index: unknown index')
+
+        const index = res[key].indexOf(bookmark.id)
+        if (-1 === index) return reject('Tag index: no bookmark found')
+
+        res[key].splice(index, 1)
+        if (res[key].length > 0) {
+          chrome.storage.sync.set(res, () => {
+            if (chrome.runtime.lastError) return reject()
+            resolve()
+          })
+        }
+        else {
+          chrome.storage.sync.remove(key, () => {
+            if (chrome.runtime.lastError) return reject()
+            resolve()
+          })
+        }
+      })
+    })
+    .catch(onError)
+  }
 }
 
 const onError = (err) => {

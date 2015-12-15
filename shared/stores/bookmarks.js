@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import TagsStore from './tags'
 
 export default class BookmarksStore {
@@ -27,9 +28,9 @@ export default class BookmarksStore {
       searchTags(terms),
       searchBookmarks(terms)
     ])
-    .then((results) => {
-      const bookmarks = results[0].concat(results[1])
-
+    .then(results => _(results).flatten().uniq('id').value())
+    .then(bookmarks => {
+      console.log(bookmarks)
       const promises = bookmarks.map(setTags)
       Promise.all(promises)
       .then(setSite)
@@ -133,20 +134,52 @@ const setTags = (bookmark) => {
       if (chrome.runtime.lastError) return reject()
 
       bookmark.tags = res[key] || []
+      bookmark.initialTags = bookmark.tags
       resolve(bookmark)
     })
   })
 }
 
 const updateTags = (bookmark) => {
-  return new Promise((resolve, reject) => {
-    const key = 'bookmark:' + bookmark.id
+  const toAdd = []
+  const toRemove = Array.from(bookmark.initialTags)
 
-    chrome.storage.sync.set({ [key]: bookmark.tags }, () => {
-      if (chrome.runtime.lastError) return reject()
-      resolve()
+  for (let tag of bookmark.tags) {
+    let index = toRemove.indexOf(tag)
+
+    // new tag
+    if (-1 === index) {
+      toAdd.push(tag)
+    }
+    // untouched tag
+    else {
+      toRemove.splice(index, 1)
+    }
+  }
+
+  const addPromises = toAdd.map(tag => TagsStore.addBookmark(tag, bookmark))
+  const removePromises = toRemove.map(tag => TagsStore.removeBookmark(tag, bookmark))
+
+  return Promise.all(addPromises.concat(removePromises))
+  .then(() => {
+    return new Promise((resolve, reject) => {
+      const key = 'bookmark:' + bookmark.id
+
+      chrome.storage.sync.set({ [key]: bookmark.tags }, () => {
+        if (chrome.runtime.lastError) return reject()
+        resolve()
+      })
     })
   })
+}
+
+const searchTags = (terms) => {
+  return TagsStore.search(terms)
+  .then(tag => { console.log(tag); return tag })
+  .then(tag => 0 !== tag.ids.length
+    ? getBookmarks(tag.ids)
+    : []
+  )
 }
 
 const searchBookmarks = (terms) => {
@@ -165,14 +198,6 @@ const searchBookmarks = (terms) => {
       resolve(bookmarks)
     })
   })
-}
-
-const searchTags = (terms) => {
-  return TagsStore.search(terms)
-  .then(tag => 0 !== tag.ids.length
-    ? getBookmarks(tag.ids)
-    : []
-  )
 }
 
 const getBookmarks = (ids) => {
