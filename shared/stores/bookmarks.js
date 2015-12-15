@@ -1,5 +1,8 @@
 import _ from 'lodash'
+import ChromePromise from 'chrome-promise'
 import TagsStore from './tags'
+
+var chrome = new ChromePromise()
 
 export default class BookmarksStore {
   static bookmarks = []
@@ -9,17 +12,13 @@ export default class BookmarksStore {
   }
 
   static recent(count) {
-    return new Promise((resolve, reject) => {
-      chrome.bookmarks.getRecent(count, bookmarks => {
-        if (chrome.runtime.lastError) return reject()
-
-        const promises = bookmarks.map(setTags)
-        Promise.all(promises)
-        .then(setSite)
-        .then(setBookmarks)
-        .then(resolve)
-      })
-    })
+    return chrome.bookmarks.getRecent(count)
+    .then(bookmarks => bookmarks.map(setTags))
+    .then(promises =>
+      Promise.all(promises)
+      .then(setSite)
+      .then(setBookmarks)
+    )
     .catch(onError)
   }
 
@@ -29,28 +28,21 @@ export default class BookmarksStore {
       searchBookmarks(terms)
     ])
     .then(results => _(results).flatten().uniq('id').value())
-    .then(bookmarks => {
-      console.log(bookmarks)
-      const promises = bookmarks.map(setTags)
+    .then(bookmarks => bookmarks.map(setTags))
+    .then(promises =>
       Promise.all(promises)
       .then(setSite)
       .then(setBookmarks)
-    })
+    )
     .catch(onError)
   }
 
   static update(bookmark) {
-    return new Promise((resolve, reject) => {
-      chrome.bookmarks.update(bookmark.id, {
-        title: bookmark.title,
-        url: bookmark.url
-      }, () => {
-        if (chrome.runtime.lastError) return reject()
-
-        updateTags(bookmark)
-        .then(resolve)
-      })
+    return chrome.bookmarks.update(bookmark.id, {
+      title: bookmark.title,
+      url: bookmark.url
     })
+    .then(() => updateTags(bookmark))
     .catch(onError)
   }
 
@@ -127,16 +119,13 @@ const setBookmarks = (bookmarks) => {
 }
 
 const setTags = (bookmark) => {
-  return new Promise((resolve, reject) => {
-    const key = 'bookmark:' + bookmark.id
+  const key = 'bookmark:' + bookmark.id
 
-    chrome.storage.sync.get(key, res => {
-      if (chrome.runtime.lastError) return reject()
-
-      bookmark.tags = res[key] || []
-      bookmark.initialTags = bookmark.tags
-      resolve(bookmark)
-    })
+  return chrome.storage.sync.get(key)
+  .then(res => {
+    bookmark.tags = res[key] || []
+    bookmark.initialTags = bookmark.tags
+    return bookmark
   })
 }
 
@@ -159,18 +148,10 @@ const updateTags = (bookmark) => {
 
   const addPromises = toAdd.map(tag => TagsStore.addBookmark(tag, bookmark))
   const removePromises = toRemove.map(tag => TagsStore.removeBookmark(tag, bookmark))
+  const key = 'bookmark:' + bookmark.id
 
   return Promise.all(addPromises.concat(removePromises))
-  .then(() => {
-    return new Promise((resolve, reject) => {
-      const key = 'bookmark:' + bookmark.id
-
-      chrome.storage.sync.set({ [key]: bookmark.tags }, () => {
-        if (chrome.runtime.lastError) return reject()
-        resolve()
-      })
-    })
-  })
+  .then(() => chrome.storage.sync.set({ [key]: bookmark.tags }))
 }
 
 const searchTags = (terms) => {
@@ -183,32 +164,21 @@ const searchTags = (terms) => {
 }
 
 const searchBookmarks = (terms) => {
-  return new Promise((resolve, reject) => {
-    chrome.bookmarks.search(terms, bookmarks => {
-      if (chrome.runtime.lastError) return reject()
-
-      // removes folders or invalid entries
-      for (var i = 0; i < bookmarks.length; i++) {
-        if (bookmarks[i].dateGroupModified || !bookmarks[i].url) {
-          bookmarks.splice(i, 1)
-          i--
-        }
+  return chrome.bookmarks.search(terms)
+  .then(bookmarks => {
+    // removes folders or invalid entries
+    for (var i = 0; i < bookmarks.length; i++) {
+      if (bookmarks[i].dateGroupModified || !bookmarks[i].url) {
+        bookmarks.splice(i, 1)
+        i--
       }
-
-      resolve(bookmarks)
-    })
+    }
+    return bookmarks
   })
 }
 
 const getBookmarks = (ids) => {
-  return new Promise((resolve, reject) => {
-    chrome.bookmarks.get(ids, bookmarks => {
-      if (chrome.runtime.lastError) return reject()
-
-      const promises = bookmarks.map(setTags)
-      Promise.all(promises)
-      .then(resolve)
-      .catch(reject)
-    })
-  })
+  return chrome.bookmarks.get(ids)
+  .then(bookmarks => bookmarks.map(setTags))
+  .then(promises => Promise.all(promises))
 }
