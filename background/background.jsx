@@ -1,13 +1,14 @@
-import Storage from '../shared/storage'
+import BookmarksStore from '../shared/stores/bookmarks'
 
 chrome.omnibox.onInputChanged.addListener(function(terms, suggest) {
-  Bookmarks.search(terms).then(function(bookmarks) {
+  BookmarksStore.search(terms).then(function(bookmarks) {
+    console.log(bookmarks)
     // limit to 6 results
     bookmarks.length = Math.min(6, bookmarks.length)
 
     const suggestions = bookmarks.map(function(bookmark) {
       return {
-        content: bookmark.safeUrl,
+        content: bookmark.url,
         description: description(bookmark, terms)
       }
     })
@@ -27,27 +28,30 @@ chrome.omnibox.onInputEntered.addListener(function(url) {
   })
 })
 
-// chrome.runtime.onInstalled
+/* -------------------------------------------------------------------------- */
 
 function description(bookmark, terms) {
-  var title = bookmark.safeTitle
-  var tags = []
+  const title = escapeXML(bookmark.title)
+  const tags = bookmark.tags.join(', ')
 
-  terms.split(/ +/).forEach(function(term) {
-    const rTerm = new RegExp('(' + term + ')', 'i')
-
-    title = '<url>' + title.replace(rTerm, '<match>$1</match>') + '</url>'
-
-    bookmark.tags.forEach(function(tag) {
-      if (rTerm.exec(tag)) {
-        tags.push(tag)
-      }
-    })
-  })
-
+  var desc = `<url>${title}</url>`
   if (tags.length > 0) {
-    title += ' - <dim><match>' + tags.join(', ') + '</match></dim>'
+    desc += `- <dim>${tags}</dim>`
   }
 
-  return title
+  terms.split(/ +/).forEach((term) => {
+    const rTerm = new RegExp('(' + term + ')', 'gi')
+    desc = desc.replace(rTerm, '<match>$1</match>')
+  })
+
+  return desc
+}
+
+function escapeXML(str) {
+  return str
+  .replace('"', '&quot;')
+  .replace('\'', '&apos;')
+  .replace('<', '&lt;')
+  .replace('>', '&gt;')
+  .replace('&', '&amp;')
 }
