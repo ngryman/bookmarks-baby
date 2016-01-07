@@ -2,13 +2,14 @@ import _ from 'lodash'
 import ChromePromise from 'chrome-promise'
 import TagsStore from './tags'
 
-var chrome = new ChromePromise()
+const chrome = new ChromePromise()
 
 export default class BookmarksStore {
   static bookmarks = []
+  static component = null
 
   static reset() {
-    this.bookmarks = []
+    BookmarksStore.bookmarks.length = 0
   }
 
   static recent(count) {
@@ -50,14 +51,7 @@ export default class BookmarksStore {
     component.state = {
       ['bookmarks']: []
     }
-
-    Object.observe(BookmarksStore, changes => {
-      const state = changes.reduce((state, change) => {
-        state[change.name] = BookmarksStore[change.name]
-        return state
-      }, {})
-      component.setState(state)
-    })
+    BookmarksStore.component = component
   }
 }
 
@@ -115,6 +109,9 @@ const setSite = (bookmarks) => {
 
 const setBookmarks = (bookmarks) => {
   BookmarksStore.bookmarks = bookmarks
+  if (BookmarksStore.component) {
+    BookmarksStore.component.setState({ bookmarks })
+  }
   return bookmarks
 }
 
@@ -156,7 +153,6 @@ const updateTags = (bookmark) => {
 
 const searchTags = (terms) => {
   return TagsStore.search(terms)
-  .then(tag => { console.log(tag); return tag })
   .then(tag => 0 !== tag.ids.length
     ? getBookmarks(tag.ids)
     : []
