@@ -1,6 +1,4 @@
 .header {
-  $bg-color: #db4c3f;
-
   display: flex;
   position: fixed;
   z-index: 1;
@@ -9,8 +7,8 @@
   width: 100%;
   height: 43px;
   padding: 6px calc(50% - 585px);
-  background: $bg-color;
-  border-bottom: solid 1px darken($bg-color, 10);
+  background: $md-red-500;
+  border-bottom: solid 1px darken($md-red-500, 10);
   box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
   will-change: transform;
 

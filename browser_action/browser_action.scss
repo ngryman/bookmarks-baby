@@ -1,3 +1,9 @@
+@import '../shared/sass/base.scss';
+
+body {
+  background: $md-red-500;
+}
+
 /**
  * Materialize customization.
  */
