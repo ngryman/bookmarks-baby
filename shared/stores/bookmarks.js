@@ -38,11 +38,33 @@ export default class BookmarksStore {
     .catch(onError)
   }
 
+  static create(bookmark) {
+    return Promise.resolve([bookmark])
+    .then(setSite)
+    .then(_.first)
+  }
+
+  static get(bookmark) {
+    return chrome.bookmarks.search(bookmark)
+    .then(bookmarks => bookmarks.map(setTags))
+    .then(promises =>
+      Promise.all(promises)
+      .then(setSite)
+    )
+    .catch(onError)
+  }
+
   static update(bookmark) {
     return chrome.bookmarks.update(bookmark.id, {
       title: bookmark.title,
       url: bookmark.url
     })
+    .then(() => updateTags(bookmark))
+    .catch(onError)
+  }
+
+  static save(bookmark) {
+    return chrome.bookmarks.create(_.pick(bookmark, 'title', 'url'))
     .then(() => updateTags(bookmark))
     .catch(onError)
   }

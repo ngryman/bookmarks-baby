@@ -1,47 +1,65 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import BookmarksStore from '../lib/src/data/bookmarks'
+import BookmarksStore from '../shared/stores/bookmarks'
 
 class App extends Component {
   constructor() {
     super()
-    this.state = {}
+    this.state = {
+      bookmark: {
+        tags: []
+      },
+      editing: false
+    }
   }
 
   componentDidMount() {
     chrome.tabs.query({ active: true }, (tabs) => {
       let tab = tabs[0]
 
-      BookmarksStore.get({ url: tab.url }).catch(function() {
-        return BookmarksStore.create({
-          title: tab.title,
-          url: tab.url
-        })
+      BookmarksStore.get({ url: tab.url })
+      .then(bookmarks => {
+        if (bookmarks.length > 0) {
+          this.setState({ bookmark: bookmarks[0] })
+          this.setState({ editing: true })
+        }
+        else {
+          BookmarksStore.create({
+            title: tab.title,
+            url: tab.url
+          })
+          .then(bookmark => this.setState({ bookmark }))
+        }
       })
-      .then(::this.setState)
     })
   }
 
   handleSubmit(e) {
     e.preventDefault()
 
-    const url = this.state.url.trim()
-    const site = this.state.site.trim()
-    const title = this.state.title.trim()
-    const tags = this.state.tags.length > 0 ? this.state.tags.split(',') : null
+    const bookmark = this.state.bookmark
+    const url = bookmark.url.trim()
+    const site = bookmark.site.trim()
+    const title = bookmark.title.trim()
+    const tags = bookmark.tags.length > 0 ? bookmark.tags.split(', ') : null
 
-    BookmarksStore.save({ url, site, title, tags })
+    if (this.state.editing) {
+      BookmarksStore.update({ url, site, title, tags })
+    }
+    else {
+      BookmarksStore.save({ url, site, title, tags })
+    }
   }
 
   render() {
+    const bookmark = this.state.bookmark
     return (
       <form className="app__inner" onSubmit={::this.handleSubmit}>
-        <input type="text" name="url" id="url" value={this.state.url} />
-        <input type="text" name="site" id="site" value={this.state.site} />
-        <input type="text" name="title" id="title" value={this.state.title} />
-        <input type="text" name="tags" id="tags" />
+        <input name="url" value={bookmark.url} />
+        <input name="site" value={bookmark.site} />
+        <input name="title" value={bookmark.title} />
         <button type="submit">Save</button>
-        <button type="button">Cancel</button>
+        <button type="button">Remove</button>
       </form>
     )
   }
