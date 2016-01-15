@@ -26,7 +26,8 @@ class App extends Component {
         else {
           BookmarksStore.create({
             title: tab.title,
-            url: tab.url
+            url: tab.url,
+            tags: []
           })
           .then(bookmark => this.setState({ bookmark }))
         }
@@ -49,6 +50,22 @@ class App extends Component {
     else {
       BookmarksStore.save({ url, site, title, tags })
     }
+
+    window.close()
+  }
+
+  handleRemoveClick(e) {
+    BookmarksStore.remove(this.state.bookmark)
+    .then(() => window.close())
+  }
+
+  renderButtons() {
+    return (
+      <div>
+        <button type="submit">Save</button>
+        {this.state.editing ? <button type="button" onClick={::this.handleRemoveClick}>Remove</button> : null}
+      </div>
+    )
   }
 
   render() {
@@ -58,8 +75,7 @@ class App extends Component {
         <input name="url" value={bookmark.url} />
         <input name="site" value={bookmark.site} />
         <input name="title" value={bookmark.title} />
-        <button type="submit">Save</button>
-        <button type="button">Remove</button>
+        {this.renderButtons()}
       </form>
     )
   }

@@ -69,6 +69,12 @@ export default class BookmarksStore {
     .catch(onError)
   }
 
+  static remove(bookmark) {
+    return chrome.bookmarks.remove(bookmark.id)
+    .then(() => removeTags(bookmark))
+    .catch(onError)
+  }
+
   static attach(component) {
     component.state = {
       ['bookmarks']: []
@@ -171,6 +177,14 @@ const updateTags = (bookmark) => {
 
   return Promise.all(addPromises.concat(removePromises))
   .then(() => chrome.storage.sync.set({ [key]: bookmark.tags }))
+}
+
+const removeTags = (bookmark) => {
+  const promises = bookmark.tags.map(tag => TagsStore.removeBookmark(tag, bookmark))
+  const key = 'bookmark:' + bookmark.id
+
+  return Promise.all(promises)
+  .then(() => chrome.storage.sync.remove(key))
 }
 
 const searchTags = (terms) => {
