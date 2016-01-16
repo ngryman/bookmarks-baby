@@ -1,0 +1,44 @@
+.search {
+  position: relative;
+  margin-bottom: 0;
+
+  &__input {
+    border-radius: 2px;
+    padding-left: 32px;
+    width: 100%;
+    max-width: 1170px;
+    height: 100%;
+    color: #fff;
+    box-sizing: border-box !important;
+    transition: background-color .2s;
+    background-color: $md-red-500;
+
+    &::-webkit-input-placeholder {
+      color: #fff;
+      opacity: .5;
+    }
+
+    &:hover {
+      background-color: lighten($md-red-500, 10);
+    }
+
+    &:focus {
+      color: #111;
+      background-color: #fff;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 8px;
+    width: 32px;
+    height: 32px;
+    color: #fff;
+
+    :focus + & {
+      color: #111;
+    }
+  }
+}
