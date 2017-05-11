@@ -4,12 +4,12 @@
   "description": "Bookmarks Baby!",
   "main": "index.js",
   "dependencies": {
-    "chrome-promise": "^1.0.6",
-    "lodash": "^3.10.1",
-    "normalize.css": "^3.0.3",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-tap-event-plugin": "^0.2.1"
+    "chrome-promise": "^2.0.3",
+    "lodash": "^4.17.4",
+    "normalize.css": "^7.0.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-tap-event-plugin": "^2.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.2.1",
@@ -18,10 +18,10 @@
     "babel-preset-react": "^6.1.18",
     "babel-preset-stage-0": "^6.1.18",
     "babelify": "^7.2.0",
-    "browserify": "^12.0.1",
+    "browserify": "^14.3.0",
     "exorcist": "^0.4.0",
     "gulp": "^3.9.0",
-    "gulp-sass": "^2.1.0",
+    "gulp-sass": "^3.1.0",
     "gulp-util": "^3.0.7",
     "material-colors": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
